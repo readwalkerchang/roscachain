@@ -1,6 +1,6 @@
 import hashlib
 
-listToHash = ['hello','world','hello','world']
+listToHash = ['hello','world','hello','world','love','hello','world','hello','world','love']
 branchList = []
 
 def hash(val: str)-> str:
@@ -12,9 +12,16 @@ def CreateBranch(left,right):
 def MakeBranch(inputList:list):
     branchList = []
     while(len(inputList) > 0):
-        left = inputList.pop(0)
-        right = inputList.pop(0)
-        branchList.append(CreateBranch(left,right))
+        if len(inputList) == 1:
+            evenInput = inputList.pop(0)
+            left, right = evenInput, evenInput
+            branchList.append(CreateBranch(left,right))
+        else:
+            left = inputList.pop(0)
+            right = inputList.pop(0)
+            branchList.append(CreateBranch(left,right))
+
+        
     return branchList
 
         
