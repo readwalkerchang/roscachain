@@ -1,6 +1,8 @@
 from userAccount import User
 import json
 import os
+from datetime import datetime
+import merkleTree
 
 #create 5 accounts
 
@@ -33,6 +35,9 @@ def sendCurrency(sender:object,receiver:object,amount:int):
      receiver['balance'] = receiverBalance + amount
      writeJson(sender)
      writeJson(receiver)
+     #return transaction data
+     dt = datetime.now()
+     return "{sender} pay {receiver} {timeStamp}".format(sender = sender['name'] ,receiver = receiver['name'], timeStamp = str(dt))
 
 user1 = createUserDB('Bob')
 user2 = createUserDB('Amy')
@@ -40,4 +45,10 @@ user3 = createUserDB('Lisa')
 user4 = createUserDB('Jason')
 user5 = createUserDB('Zoey')
 
-sendCurrency(user1,user2,50)
+
+listToHash = []
+listToHash.append(sendCurrency(user1,user2,50))
+listToHash.append(sendCurrency(user2,user3,50))
+listToHash.append(sendCurrency(user3,user4,50))
+newMerkleTree = merkleTree.MerkleTree()
+print(newMerkleTree.buildTree(listToHash))
