@@ -19,7 +19,7 @@ def writeJson(userDict:dict):
 
 def writeJsonBlock(blockdict:dict):
     #1. create a file with user's name
-    jsonStr = json.dumps(blockdict)
+    jsonStr = json.dumps(blockdict, indent=4 )
     save_path = 'data'
     file_name = 'block.json'
     completeName = os.path.join(save_path, file_name)
@@ -62,6 +62,23 @@ def sendCurrency(sender:object,receiver:object,amount:int):
      dt = datetime.now()
      return "{sender} pay {receiver} {timeStamp}".format(sender = sender['name'] ,receiver = receiver['name'], timeStamp = str(dt))
 
+def runROSCA(meetingTimes:int, amount:int, userList:list):
+    newPool = createPoolDB()
+    for x in range(meetingTimes):
+        print('the ' +str(x+1)+' meeting')
+        for y in userList:
+            if sendCurrency(y,newPool,amount):
+                print('Pay success ')
+        sendCurrency(newPool,userList[x],newPool['balance'])
+        #update trust value
+        winner = userList[x]
+        trustvalue =  (x+1)/10
+        winner['trustValue'] += trustvalue
+        writeJson(winner)
+        print(winner['name']+' has '+str(userList[x]['balance']))
+
+
+#Create a block with transactions and rootHash
 user1 = createUserDB('Bob')
 user2 = createUserDB('Amy')
 user3 = createUserDB('Lisa')
@@ -70,35 +87,21 @@ user5 = createUserDB('Zoey')
 pool = createPoolDB()
 
 
-# listToHash = []
-# listToHash.append(sendCurrency(user1,pool,10))
-# listToHash.append(sendCurrency(user2,pool,10))
-# listToHash.append(sendCurrency(user3,pool,10))
-# listToHash.append(sendCurrency(user4,pool,10))
-# listToHash.append(sendCurrency(user5,pool,10))
+listToHash1 = []
+listToHash1.append(sendCurrency(user1,user2,10))
+listToHash1.append(sendCurrency(user2,user1,10))
+listToHash1.append(sendCurrency(user3,user4,10))
+listToHash1.append(sendCurrency(user4,user3,10))
+listToHash1.append(sendCurrency(user5,user1,10))
+listToHash1.append(sendCurrency(user1,user5,10))
 
-# s = Blockchain()
-# s.addBlock(listToHash)
-# s.addBlock(['one','two'])
-
-# blockdict = s.head.__dict__
-
-# jsonStr = json.dumps(blockdict)
-# writeJsonBlock(jsonStr)
+s = Blockchain()
+s.addBlock(listToHash1)
+blockdict = s.head.__dict__
+writeJsonBlock(blockdict)
 
 
-###Run ROSCA
+### Run a ROSCA and update trust value
 
 userlist = [user1, user2, user3, user4, user5]
-
-def runROSCA(meetingTimes:int, amount:int, userList:list,pool:dict):
-    for x in range(meetingTimes):
-        print('the ' +str(x+1)+' meeting')
-        for y in userList:
-            sendCurrency(y,pool,amount)
-
-        sendCurrency(pool,userList[x],pool['balance'])
-
-runROSCA(5,10,userlist,pool)
-
-
+runROSCA(5,10,userlist)
