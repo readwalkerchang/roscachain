@@ -36,6 +36,6 @@ class MerkleTree:
 
 
 
-listToHash = ['hello','world']
-newMerkleTree = MerkleTree()
-print(newMerkleTree.buildTree(listToHash))
+# listToHash = ['hello','world']
+# newMerkleTree = MerkleTree()
+# print(newMerkleTree.buildTree(listToHash))

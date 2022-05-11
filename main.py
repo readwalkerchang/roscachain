@@ -2,15 +2,25 @@ from userAccount import User
 import json
 import os
 from datetime import datetime
-import merkleTree
+from  blockchain import Blockchain
 
-#create 5 accounts
+# create 5 accounts
 
 def writeJson(userDict:dict):
     #1. create a file with user's name
     jsonStr = json.dumps(userDict)
     save_path = 'data'
     file_name = json.loads(jsonStr)['name'] + '.json'
+    completeName = os.path.join(save_path, file_name)
+    #2. put the account message into the file
+    with open(completeName, "w") as f :
+        f.write(jsonStr)
+
+def writeJsonBlock(blockdict:dict):
+    #1. create a file with user's name
+    jsonStr = json.dumps(blockdict)
+    save_path = 'data'
+    file_name = 'block.json'
     completeName = os.path.join(save_path, file_name)
     #2. put the account message into the file
     with open(completeName, "w") as f :
@@ -44,11 +54,30 @@ user2 = createUserDB('Amy')
 user3 = createUserDB('Lisa')
 user4 = createUserDB('Jason')
 user5 = createUserDB('Zoey')
+pool = createUserDB('Pool')
 
 
 listToHash = []
-listToHash.append(sendCurrency(user1,user2,50))
-listToHash.append(sendCurrency(user2,user3,50))
-listToHash.append(sendCurrency(user3,user4,50))
-newMerkleTree = merkleTree.MerkleTree()
-print(newMerkleTree.buildTree(listToHash))
+
+
+s = Blockchain()
+s.addBlock(listToHash)
+# s.addBlock(['one','two'])
+
+blockdict = s.head.__dict__
+
+jsonStr = json.dumps(blockdict)
+writeJsonBlock(jsonStr)
+
+
+#Run ROSCA
+# for x in range(10):
+#     listToHash.append(sendCurrency(user1,pool,10))
+#     listToHash.append(sendCurrency(user2,pool,10))
+#     listToHash.append(sendCurrency(user3,pool,10))
+#     listToHash.append(sendCurrency(user4,pool,10))
+#     listToHash.append(sendCurrency(user5,pool,10))
+#     print('the ' +str(x)+' meeting')
+
+
+
