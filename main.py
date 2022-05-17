@@ -1,4 +1,6 @@
-from transaction import *  
+from transaction import *
+from userAccount import *
+from blockchain import *
 
 #Create a block with transactions and rootHash
 user1 = createUserDB('Bob')
@@ -21,6 +23,7 @@ s = Blockchain()
 s.addBlock(listToHash1)
 blockdict = s.head.__dict__
 writeJsonBlock(blockdict)
+print(blockdict)
 
 
 ### Run a ROSCA and update trust value
