@@ -31,11 +31,3 @@ class MerkleTree:
             if len(inputList) == 0 &  len(branchList) != 1:
                 inputList = branchList
         return branchList[0]
-
-        
-
-
-
-# listToHash = ['hello','world']
-# newMerkleTree = MerkleTree()
-# print(newMerkleTree.buildTree(listToHash))
