@@ -2,6 +2,7 @@ from merkleTree import MerkleTree
 
 class Block:
     def __init__(self, next):
+        self.block = {}
         self.transactions = ()
         self.next = next
         self.rootHash = ''
@@ -10,7 +11,7 @@ class Blockchain:
     def __init__(self):
         self.head = None
        
-
+#make block to be a dict and add block to a nested dict
     def addBlock(self, transactions):
         transactionsToAdd = tuple(transactions)
         newMerkleTree = MerkleTree()
