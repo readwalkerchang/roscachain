@@ -1,13 +1,14 @@
 from helper import *
 from datetime import *
+import random
 
 class User:
     def __init__(self,name,trustValue):
         self.name = name
         self.trustValue = trustValue
         self.address = ''
-        self.trustValue = 0
         self.balance = 6000
+        self.bidingPrice = 0
         
         
 class Pool:
@@ -74,25 +75,47 @@ def sendCurrency(sender:object,receiver:object,amount:int):
      return "{sender} pay {receiver} {timeStamp}".format(sender = sender['name'] ,receiver = receiver['name'], timeStamp = str(dt))
 
 def runROSCA(meetingTimes:int, amount:int, userList:list):
-    
+    bidingList = userList[1:] #create a list for biding
+    roscaUserList = [userList[0]]
+    winningState = {"winner": {}, "bidingPrice": 0}
     newPool = createPoolDB()
     for x in range(meetingTimes):
         print('the ' +str(x+1)+' meeting')
-        # findWinner()
-        #print('the ' winner is meeting')
-        for y in userList:
-            if sendCurrency(y,newPool,amount):
+        if x > 0 and x < meetingTimes: #excludd first run(no biding)
+            roscaUserList = roscaUserList [:x]
+            winningState = biding(bidingList)
+            bidingList.remove(winningState["winner"])
+            roscaUserList.append(winningState["winner"])
+        for y in roscaUserList:
+            if(roscaUserList[x] != y):
+                sendCurrency(y,newPool,amount)
+                print('Pay success')
+        for z in bidingList:
+            if len(bidingList) > 1 :
+                sendCurrency(z,newPool,amount - winningState["bidingPrice"])
                 print('Pay success ')
-        sendCurrency(newPool,userList[x],newPool['balance'])
+        sendCurrency(newPool,roscaUserList[x],newPool['balance']) # send funds to the winner
+        print("the winner is: ",roscaUserList[x]["name"])
         #update trust value
-        winner = userList[x]
-        trustvalue =  (x+1)/10
-        winner['trustValue'] += trustvalue
-        writeJson(winner)
-        print(winner['name']+' has '+str(userList[x]['balance']))
+        roscaUserList = roscaUserList + bidingList
+        updateTrustvalue(roscaUserList)
+        print(bidingList)
+        print(roscaUserList)
         
-# def findWinner():
-#     return winner
+def biding(bidinglist):
+    pricesToCompare = []
+    for x in bidinglist:
+        price = random.randint(100,300)
+        x["bidingPrice"] = price
+        pricesToCompare.append(price)
+    Max = max(pricesToCompare)
+    maxIndex = pricesToCompare.index(Max)
+    winner = bidinglist[maxIndex]
+    winningState = {"winner": winner, "bidingPrice": Max}
+    return winningState
 
-# def verifyTrustvalue():
-#     return none
+def updateTrustvalue(roscaUserList):
+    trustvalue =  1
+    for i in roscaUserList:
+        i['trustValue'] += trustvalue
+    writeJson(i)
